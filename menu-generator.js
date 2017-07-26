@@ -1,13 +1,11 @@
 import { Template } from 'meteor/templating';
-import customisableTable from './customisableTable'
+import listBuilder from './listBuilder';
 
-createMenu = function(element, arrData, options = customisableTable) {
+createMenu = function(element, arrData, options = listBuilder) {
   const { ulClass, liClass } = options;
   let ul = document.createElement('ul');
-  ul.className = ulClass;
   arrData.map(function(obj) {
     let li = document.createElement('li');
-    li.className = liClass;
     let i = document.createElement('i');
     let innerContent;
 
@@ -25,10 +23,14 @@ createMenu = function(element, arrData, options = customisableTable) {
     innerContent.innerHTML = obj.label;
     li.appendChild(innerContent);
     if (obj.class) {
-      li.classList.add(obj.class);
+      li.className = obj.class;
+    } else {
+      li.className = liClass;
     }
     if (obj.parentClass) {
       ul.classList.add(obj.parentClass);
+    } else {
+      ul.className = ulClass;
     }
     if (obj.content) {
       createMenu(li, obj.content);
@@ -40,6 +42,6 @@ createMenu = function(element, arrData, options = customisableTable) {
 
 Template.generateMenu.onRendered(function () {
   const element = document.getElementById('root');
-  const arr = Template.instance().data && Template.instance().data['data'] ?  Template.instance().data['data'] : customisableTable.data ? customisableTable.data : [];
+  const arr = Template.instance().data && Template.instance().data['data'] ?  Template.instance().data['data'] : listBuilder.data ? listBuilder.data : [];
   createMenu(element, arr);
 });
